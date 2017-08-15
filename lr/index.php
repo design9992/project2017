@@ -1,35 +1,52 @@
-<!DOCTYPE html>
+<?php
+if (!isset($_SESSION)) {
+  session_start();
+}
+?>
+<!doctype html>
 <html><!-- InstanceBegin template="/Templates/lr.dwt.php" codeOutsideHTMLIsLocked="false" -->
 <head>
-<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>html5</title>
+<title>Life Reminder</title>
 <!-- InstanceEndEditable -->
 
 <!-- Latest compiled and minified CSS -->
+<link href="//fonts.googleapis.com/css?family=Oswald" rel="stylesheet">
 <link rel="stylesheet" href="css/bootstrap.min.css">
-<link href="css/navbar-static-top.css" rel="stylesheet">
-
-
-<!-- jQuery (necessary for Bootstrap's JavaScript plugins put before bootstrap js) -->
 <script src="js/jquery.min.js"></script>
-<!-- Latest compiled and minified JavaScript -->
 <script src="js/bootstrap.min.js"></script>
-
-
-
-<!--<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>-->
-
-
+<link rel="stylesheet" href="css/font-awesome.css">
+<link rel="stylesheet" href="css/style.css">
 <!-- InstanceBeginEditable name="head" -->
 <meta charset="utf-8">
 
+<style type="text/css">
+	@media only screen and (max-width: 768px) {
+		.jumbotron {
+			background-image: none;
+		}
+		
+		.jumbotron h1 {
+			font-size: 24px;
+		}
+		
+		.jumbotron p {
+			font-size: 12px;
+		}
+		
+		.btn-group-lg>.btn, .btn-lg {
+			padding: 5px 8px; 
+			font-size: 12px;
+		}
+	}
+</style>
 <!-- InstanceEndEditable -->
 </head>
 
 <body>
- <!-- Static navbar -->
+	
+    <!-- Static navbar -->
     <nav class="navbar navbar-inverse navbar-static-top">
       <div class="container">
         <div class="navbar-header">
@@ -39,110 +56,148 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Project name</a>
+          <a class="navbar-brand" href="http://lifereminder.tk">LifeReminder.tk</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
+            <li class="active"><a href="index.php">Home</a></li>
+            <li><a href="our_team.php">Our Team</a></li>
+            <li><a href="about.php">About</a></li>
+            <li><a href="contact.php">Contact</a></li>
+			
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Reminders <span class="caret"></span></a>
               <ul class="dropdown-menu">
-                <li><a href="#">Action</a></li>
-                <li><a href="#">Another action</a></li>
-                <li><a href="#">Something else here</a></li>
-                <li role="separator" class="divider"></li>
-                <li class="dropdown-header">Nav header</li>
-                <li><a href="#">Separated link</a></li>
-                <li><a href="#">One more separated link</a></li>
+                <li><a href="reminder/new_reminder.php">Create New Reminder</a></li>
+                <li><a href="reminder/list_reminders.php">My Reminders</a></li>
               </ul>
             </li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="../navbar/">Default</a></li>
-            <li class="active"><a href="./">Static top <span class="sr-only">(current)</span></a></li>
-            <li><a href="../navbar-fixed-top/">Fixed top</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Users <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+			  	<?php if (empty($_SESSION['MM_UserId'])) { ?>
+                <li><a href="users/register.php">Register New User</a></li>
+                <li><a href="users/login.php">Login</a></li>
+                <li><a href="users/forgot.php">Forgot Password</a></li>
+				<?php } ?>
+				<?php if (!empty($_SESSION['MM_UserId'])) { ?>
+                <li><a href="users/change_password.php">Change Password</a></li>
+                <li><a href="users/logout.php">Logout</a></li>
+				<?php } ?>
+              </ul>
+            </li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
     </nav>
 
-<div class="container">
-<!-- InstanceBeginEditable name="EditRegion3" -->
-  <div class="row">
-  <div class="col-md-12">
-  <h3>Register as a new user</h3>
-  <form id="form1" name="form1" action="">
-  <div class="form-group">
-    <label for="email">Email address</label>
-    <input type="email" class="form-control" id="email" name="email" placeholder="Enter Email">
-  </div>
-  <div class="form-group">
-    <label for="password">Password</label>
-    <input type="password" class="form-control" id="password" name="password" placeholder="Create Password">
-  </div>
-  
-  <div class="form-group">
-    <label for="confirm_password">Confirm Password</label>
-    <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Confirm Password">
-  </div>
-  
-  <div class="first_name">
-    <label for="first_name">First Name</label>
-    <input type="first_name" class="form-control" id="first_name" name="first_name" placeholder="Enter First Name">
-  </div>
-  
-    <div class="last_name">
-    <label for="last_name">Last Name</label>
-    <input type="last_name" class="form-control" id="last_name" name="last_name" placeholder="Enter Last Name">
-  </div>
-  <div class="form-group">
-    <label for="confirm_password">Gender</label>
-  <div class="radio">
-  <label>
-    <input type="radio" name="gender" id="gender_male" name="male" value="male" checked>
-    Male
-    
-  </label>
-</div>
-<div class="radio">
-  <label>
-    <input type="radio" name="gender" id="gender_female" value="female">
-    Female
-   
-  </label>
-</div></div>
+	<!-- InstanceBeginEditable name="EditRegion3" -->
+<section class="jumbotron">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-7 col-xs-12">
+				<h1>Life Reminder</h1>
+				<p class="lead">Life Reminder is to remind your ideas after your death.
+					<a class="btn btn-primary btn-lg" href="#">Find out more</a>
+				</p>
+			</div>
+			<div class="col-md-5 col-xs-12">
+				<img src="images/logos.png" />
+			</div>
+		</div>
+	</div>
+</section> 
 
-  <div class="form-group">
-    <label for="birth_year">Birth Year</label>
-    <input type="number" class="form-control" id="birth_year" name="birth_year" placeholder="Enter Birth Year">
-  </div>
-  
-  <input name="created_dt" type="hidden" value="<?php echo date('Y-m-d H:i:s'); ?>">
-  <input name="login_dt" type="hidden" value="<?php echo time(); ?>">
-<!--  <div class="form-group">
-    <label for="exampleInputFile">File input</label>
-    <input type="file" id="exampleInputFile">
-    <p class="help-block">Example block-level help text here.</p>
-  </div>-->
-  <div class="checkbox">
-    <label>
-      <input type="checkbox" id="terms" >I accept terms and conditions
-    </label>
-  </div>
-  <button type="submit" class="btn btn-default">Register</button>
-</form></div>
-  <div></div>
-  
-  
-  
-  
-  </div>
-<!-- InstanceEndEditable -->
+<section class="section-gray">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-3 text-center">
+				<span class="fa-stack fa-lg fa-4x">
+				  <i class="fa fa-circle fa-stack-2x fa-color"></i>
+				  <i class="fa fa-terminal fa-stack-1x fa-inverse"></i>
+				</span>
+				<h3>Valid Code</h3>
+			</div>
+			<div class="col-md-3 text-center">
+				<span class="fa-stack fa-lg fa-4x">
+				  <i class="fa fa-circle fa-stack-2x fa-color"></i>
+				  <i class="fa fa-laptop fa-stack-1x fa-inverse"></i>
+				</span>
+				<h3>Responsive</h3>
+			</div>
+			<div class="col-md-3 text-center">
+				<span class="fa-stack fa-lg fa-4x">
+				  <i class="fa fa-circle fa-stack-2x fa-color"></i>
+				  <i class="fa fa-video-camera fa-stack-1x fa-inverse"></i>
+				</span>
+				<h3>Animation Ready</h3>
+			</div>
+			<div class="col-md-3 text-center">
+				<span class="fa-stack fa-lg fa-4x">
+				  <i class="fa fa-circle fa-stack-2x fa-color"></i>
+				  <i class="fa fa-gear fa-stack-1x fa-inverse"></i>
+				</span>
+				<h3>Customizable</h3>
+			</div>
+		</div>
+	</div>
+</section>
+
+<section class="section-secondary slogan">
+	<h1>Take a Closer Look</h1>
+	<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam porttitor sapien sit amet ante sodales interdum. Curabitur in est risus</p>
+	<a href="#" class="btn btn-lg btn-default">More Info</a>
+</section>
+
+<section>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6">
+				<h2 class="page-header">Business Theme Includes....</h2>
+				<ul class="feature-list">
+					<li><i class="glyphicon glyphicon-ok"></i> Bootstrap 3 Framework</li>
+					<li><i class="glyphicon glyphicon-ok"></i> Mobile Responsive Design</li>
+					<li><i class="glyphicon glyphicon-ok"></i> Minimal Custom CSS Styles</li>
+					<li><i class="glyphicon glyphicon-ok"></i> Unstyled: Add Your Own Style and Content!</li>
+					<li><i class="glyphicon glyphicon-ok"></i> 100% <strong>Free</strong> to Use</li>
+					<li><i class="glyphicon glyphicon-ok"></i> Open Source: Use for any project, private or commercial!</li>
+				</ul>
+			</div>
+			<div class="col-md-6">
+				<img src="images/macbook.png" class="img-responsive" />
+			</div>
+		</div>
+	</div>
+</section>
+
+<section class="section-primary">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6">
+				<img src="images/sample1.jpg" class="img-responsive img-circle" />
+			</div>
+			<div class="col-md-6">
+				<h2 class="page-header">More Features Include...</h2>
+				<ul class="feature-list">
+				  <li><i class="glyphicon glyphicon-ok"></i> Bootstrap 3 Framework</li>
+				  <li><i class="glyphicon glyphicon-ok"></i> Mobile Responsive Design</li>
+				  <li><i class="glyphicon glyphicon-ok"></i> Minimal Custom CSS Styles</li>
+				  <li><i class="glyphicon glyphicon-ok"></i> Unstyled: Add Your Own Style and Content!</li>
+				  <li><i class="glyphicon glyphicon-ok"></i> 100% <strong>Free</strong> to Use</li>
+				  <li><i class="glyphicon glyphicon-ok"></i> Open Source: Use for any project, private or commercial!</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</section>
 
 
-</div>
-
+	<!-- InstanceEndEditable -->
+	
+	<footer>
+		<p>Life Reminder : Copyright &copy; 2017 - <a href="#">Terms</a> | <a href="#">Privacy</a></p>
+	</footer>
 </body>
 <!-- InstanceEnd --></html>

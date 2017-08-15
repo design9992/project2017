@@ -32,7 +32,7 @@ function isAuthorized($strUsers, $strGroups, $UserName, $UserGroup) {
   return $isValid; 
 }
 
-$MM_restrictGoTo = "login.php";
+$MM_restrictGoTo = "../users/login.php";
 if (!((isset($_SESSION['MM_Username'])) && (isAuthorized("",$MM_authorizedUsers, $_SESSION['MM_Username'], $_SESSION['MM_UserGroup'])))) {   
   $MM_qsChar = "?";
   $MM_referrer = $_SERVER['PHP_SELF'];
@@ -45,14 +45,9 @@ if (!((isset($_SESSION['MM_Username'])) && (isAuthorized("",$MM_authorizedUsers,
 }
 ?>
 <?php
-if (!function_exists("GetSQLValueString")) {
 function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDefinedValue = "") 
 {
-  if (PHP_VERSION < 6) {
-    $theValue = get_magic_quotes_gpc() ? stripslashes($theValue) : $theValue;
-  }
-
-  $theValue = function_exists("mysql_real_escape_string") ? mysql_real_escape_string($theValue) : mysql_escape_string($theValue);
+  $theValue = (!get_magic_quotes_gpc()) ? addslashes($theValue) : $theValue;
 
   switch ($theType) {
     case "text":
@@ -63,7 +58,7 @@ function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDe
       $theValue = ($theValue != "") ? intval($theValue) : "NULL";
       break;
     case "double":
-      $theValue = ($theValue != "") ? doubleval($theValue) : "NULL";
+      $theValue = ($theValue != "") ? "'" . doubleval($theValue) . "'" : "NULL";
       break;
     case "date":
       $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
@@ -74,12 +69,12 @@ function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDe
   }
   return $theValue;
 }
-}
 
 $editFormAction = $_SERVER['PHP_SELF'];
 if (isset($_SERVER['QUERY_STRING'])) {
   $editFormAction .= "?" . htmlentities($_SERVER['QUERY_STRING']);
 }
+
 
 if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "form1")) {
   $insertSQL = sprintf("INSERT INTO lr_reminders (user_id, title, emailTo, message, fileLink, status, reminder_created_dt) VALUES (%s, %s, %s, %s, %s, %s, %s)",
@@ -101,39 +96,31 @@ if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "form1")) {
   }
   header(sprintf("Location: %s", $insertGoTo));
 }
-?>
-<!DOCTYPE html>
+?><!doctype html>
 <html><!-- InstanceBegin template="/Templates/lr.dwt.php" codeOutsideHTMLIsLocked="false" -->
 <head>
-<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>html5</title>
+<title>New Reminder</title>
 <!-- InstanceEndEditable -->
 
 <!-- Latest compiled and minified CSS -->
+<link href="//fonts.googleapis.com/css?family=Oswald" rel="stylesheet">
 <link rel="stylesheet" href="../css/bootstrap.min.css">
-<link href="../css/navbar-static-top.css" rel="stylesheet">
-
-
-<!-- jQuery (necessary for Bootstrap's JavaScript plugins put before bootstrap js) -->
 <script src="../js/jquery.min.js"></script>
-<!-- Latest compiled and minified JavaScript -->
 <script src="../js/bootstrap.min.js"></script>
-
-
-
-<!--<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>-->
-
-
+<link rel="stylesheet" href="../css/font-awesome.css">
+<link rel="stylesheet" href="../css/style.css">
 <!-- InstanceBeginEditable name="head" -->
 <meta charset="utf-8">
+
 
 <!-- InstanceEndEditable -->
 </head>
 
 <body>
- <!-- Static navbar -->
+	
+    <!-- Static navbar -->
     <nav class="navbar navbar-inverse navbar-static-top">
       <div class="container">
         <div class="navbar-header">
@@ -143,94 +130,89 @@ if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "form1")) {
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Project name</a>
+          <a class="navbar-brand" href="http://lifereminder.tk">LifeReminder.tk</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
+            <li class="active"><a href="../index.php">Home</a></li>
+            <li><a href="../our_team.php">Our Team</a></li>
+            <li><a href="../about.php">About</a></li>
+            <li><a href="../contact.php">Contact</a></li>
+			
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Reminders <span class="caret"></span></a>
               <ul class="dropdown-menu">
-                <li><a href="#">Action</a></li>
-                <li><a href="#">Another action</a></li>
-                <li><a href="#">Something else here</a></li>
-                <li role="separator" class="divider"></li>
-                <li class="dropdown-header">Nav header</li>
-                <li><a href="#">Separated link</a></li>
-                <li><a href="#">One more separated link</a></li>
+                <li><a href="new_reminder.php">Create New Reminder</a></li>
+                <li><a href="list_reminders.php">My Reminders</a></li>
               </ul>
             </li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="../../navbar/">Default</a></li>
-            <li class="active"><a href="./">Static top <span class="sr-only">(current)</span></a></li>
-            <li><a href="../../navbar-fixed-top/">Fixed top</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Users <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+			  	<?php if (empty($_SESSION['MM_UserId'])) { ?>
+                <li><a href="../users/register.php">Register New User</a></li>
+                <li><a href="../users/login.php">Login</a></li>
+                <li><a href="../users/forgot.php">Forgot Password</a></li>
+				<?php } ?>
+				<?php if (!empty($_SESSION['MM_UserId'])) { ?>
+                <li><a href="../users/change_password.php">Change Password</a></li>
+                <li><a href="../users/logout.php">Logout</a></li>
+				<?php } ?>
+              </ul>
+            </li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
     </nav>
 
-<div class="container">
-<!-- InstanceBeginEditable name="EditRegion3" -->
-   <div class="row">
-  <div class="col-md-12">
-    <h3>Create a new reminder</h3>
-    <form method="POST" name="form1" id="form1" action="<?php echo $editFormAction; ?>">
-  <div class="form-group">
-    <label for="title">Title</label>
-    <input type="text" class="form-control" name="title" id="title" placeholder="Enter Title">
-  </div>
-  <div class="form-group">
-    <label for="emailTo">Email To</label>
-    <input type="text" class="form-control" name="emailTo" id="emailTo" placeholder="Enter Email">
-  </div>
-
-   <div class="form-group">
-    <label for="message">Your Message</label>
-    <textarea class="form-control" name="message" id="message" row="5" placeholder="Leave Message">
-  </textarea></div>
-  
-     <div class="form-group">
-    <label for="fileLink">File Link</label>
-    <input type="text" class="form-control" name="fileLink" id="fileLink" placeholder="Enter Link">
-  </div>
-
-  <div class="form-group">
-    <label for="status">Status</label><br>
-    
-      <label>
-        <input type="radio" name="status" value="1" id="status_0">
-        Active</label>
-      
-      <label>
-        <input type="radio"  name="status" value="0" id="status_1">
-        Inactive</label>
-      <br>
-   
-  </div>
-  
- </div>
-
-   <button type="submit" class="btn btn-default">Create</button>
-  
-  <input name="reminder_created_dt" type="hidden"  id="reminder_created_dt" value="<?php echo date("Y-m-d H-i-s"); ?>">
-  <input name="user_id" type="hidden" value="<?php echo $_SESSION['MM_UserId']; ?>">
-  <input type="hidden" name="MM_insert" value="form1">
-    </form>
-  </div>
-  
-  
-  
-  
-  
-  
-   </div>
-<!-- InstanceEndEditable -->
-
-
+	<!-- InstanceBeginEditable name="EditRegion3" -->
+		<div class="container">
+<div class="row">
+			<div class="col-md-12">
+				<h3>New Reminder</h3>
+				<form method="POST" name="form1" id="form1" action="<?php echo $editFormAction; ?>">
+				  <div class="form-group">
+					<label for="title">Title</label>
+					<input type="text" class="form-control" id="title" name="title" placeholder="Enter Title">
+				  </div>
+				  <div class="form-group">
+					<label for="emailTo">Email</label>
+					<input type="email" class="form-control" id="emailTo" name="emailTo" placeholder="Enter Email">
+				  </div>
+				  <div class="form-group">
+					<label for="title">Message</label>
+					<textarea name="message" id="message" class="form-control" rows="5" placeholder="Enter Message"></textarea>
+				  </div>
+				  <div class="form-group">
+					<label for="fileLink">File Link</label>
+					<input type="text" class="form-control" id="fileLink" name="fileLink" placeholder="Enter File Link">
+				  </div>
+				  <div class="form-group">
+					<label for="status">Status</label>
+					<p>
+					  <label>
+					    <input type="radio" name="status" value="1">
+					    Active</label>
+					  <label>
+					    <input type="radio" name="status" value="0">
+					    Inactive</label>
+					  <br>
+				    </p>
+				  </div>
+				  <button type="submit" class="btn btn-default">Submit</button>
+			      <input name="user_id" type="hidden" id="user_id" value="<?php echo $_SESSION['MM_UserId']; ?>">
+				  <input name="reminder_created_dt" type="hidden" id="reminder_created_dt" value="<?php echo date('Y-m-d H:i:s'); ?>" />
+				  <input type="hidden" name="MM_insert" value="form1">
+			  </form>
+			</div>
+		</div> 
 </div>
-
+  <!-- InstanceEndEditable -->
+	
+	<footer>
+		<p>Life Reminder : Copyright &copy; 2017 - <a href="#">Terms</a> | <a href="#">Privacy</a></p>
+	</footer>
 </body>
 <!-- InstanceEnd --></html>

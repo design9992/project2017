@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <dwsync>
-<file name="login.php" server="C:/XAMPP/htdocs/project2017/" local="131437705777782708" remote="131437705770000000" />
-<file name="forgot.php" server="C:/XAMPP/htdocs/project2017/" local="131448162784766687" remote="131448162780000000" />
-<file name="forgot_failure.php" server="C:/XAMPP/htdocs/project2017/" local="131430833696617402" remote="131430833690000000" />
-<file name="forgot_success.php" server="C:/XAMPP/htdocs/project2017/" local="131430833550647078" remote="131430833550000000" />
-<file name="intermediate2.php" server="C:/XAMPP/htdocs/project2017/" local="131430782031102429" remote="131430782030000000" />
-<file name="intermediate3.php" server="C:/XAMPP/htdocs/project2017/" local="131430833361073307" remote="131430833360000000" />
-<file name="login_failure.php" server="C:/XAMPP/htdocs/project2017/" local="131433378634842943" remote="131433378630000000" />
-<file name="login_success.php" server="C:/XAMPP/htdocs/project2017/" local="131433378899039572" remote="131433378890000000" />
-<file name="logout.php" server="C:/XAMPP/htdocs/project2017/" local="131433379654490624" remote="131433379650000000" />
-<file name="register_failure.php" server="C:/XAMPP/htdocs/project2017/" local="131433372259829780" remote="131433372250000000" />
-<file name="register_success.php" server="C:/XAMPP/htdocs/project2017/" local="131433372945120785" remote="131433372940000000" />
-<file name="register.php" server="C:/XAMPP/htdocs/project2017/" local="131434336563989925" remote="131434336560000000" />
-<file name="intermediate1.php" server="C:/XAMPP/htdocs/project2017/" local="131441288824144560" remote="131441288820000000" />
-<file name="change_password.php" server="C:/XAMPP/htdocs/project2017/" local="131448149675698286" remote="131448149670000000" />
+<file name="login.php" server="C:/XAMPP/htdocs/project2017/" local="131469324970000000" remote="131469324970000000" />
+<file name="intermediate1.php" server="C:/XAMPP/htdocs/project2017/" local="131469324970000000" remote="131469324970000000" />
+<file name="login_success.php" server="C:/XAMPP/htdocs/project2017/" local="131469324970000000" remote="131469324970000000" />
+<file name="login_failure.php" server="C:/XAMPP/htdocs/project2017/" local="131469324970000000" remote="131469324970000000" />
+<file name="register.php" server="C:/XAMPP/htdocs/project2017/" local="131469324970000000" remote="131469324970000000" />
+<file name="register_success.php" server="C:/XAMPP/htdocs/project2017/" local="131469324970000000" remote="131469324970000000" />
+<file name="register_failure.php" server="C:/XAMPP/htdocs/project2017/" local="131469324970000000" remote="131469324970000000" />
+<file name="forgot.php" server="C:/XAMPP/htdocs/project2017/" local="131469324970000000" remote="131469324970000000" />
+<file name="change_password.php" server="C:/XAMPP/htdocs/project2017/" local="131469324970000000" remote="131469324970000000" />
+<file name="logout.php" server="C:/XAMPP/htdocs/project2017/" local="131469324970000000" remote="131469324970000000" />
+<file name="register2.php" server="C:/XAMPP/htdocs/project2017/" local="131469324970000000" remote="131469324970000000" />
 </dwsync>

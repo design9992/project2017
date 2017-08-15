@@ -1,15 +1,9 @@
 <?php require_once('../../Connections/conn.php'); ?>
 <?php
-$threeDays = time()-(60*60); // three days from today. 24*3
 
-if (!function_exists("GetSQLValueString")) {
 function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDefinedValue = "") 
 {
-  if (PHP_VERSION < 6) {
-    $theValue = get_magic_quotes_gpc() ? stripslashes($theValue) : $theValue;
-  }
-
-  $theValue = function_exists("mysql_real_escape_string") ? mysql_real_escape_string($theValue) : mysql_escape_string($theValue);
+  $theValue = (!get_magic_quotes_gpc()) ? addslashes($theValue) : $theValue;
 
   switch ($theType) {
     case "text":
@@ -20,7 +14,7 @@ function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDe
       $theValue = ($theValue != "") ? intval($theValue) : "NULL";
       break;
     case "double":
-      $theValue = ($theValue != "") ? doubleval($theValue) : "NULL";
+      $theValue = ($theValue != "") ? "'" . doubleval($theValue) . "'" : "NULL";
       break;
     case "date":
       $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
@@ -31,40 +25,48 @@ function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDe
   }
   return $theValue;
 }
-}
-
-$maxRows_Recordset1 = 5;
-$pageNum_Recordset1 = 0;
-if (isset($_GET['pageNum_Recordset1'])) {
-  $pageNum_Recordset1 = $_GET['pageNum_Recordset1'];
-}
-$startRow_Recordset1 = $pageNum_Recordset1 * $maxRows_Recordset1;
-
-mysql_select_db($database_conn, $conn);
-$query_Recordset1 = "SELECT * FROM lr_users WHERE lr_users.emailFlag1 =1 AND lr_users.emailFlag1Date <$threeDays AND lr_users.cronFlag =0";
-$query_limit_Recordset1 = sprintf("%s LIMIT %d, %d", $query_Recordset1, $startRow_Recordset1, $maxRows_Recordset1);
-$Recordset1 = mysql_query($query_limit_Recordset1, $conn) or die(mysql_error());
-$row_Recordset1 = mysql_fetch_assoc($Recordset1);
-
-if (isset($_GET['totalRows_Recordset1'])) {
-  $totalRows_Recordset1 = $_GET['totalRows_Recordset1'];
-} else {
-  $all_Recordset1 = mysql_query($query_Recordset1);
-  $totalRows_Recordset1 = mysql_num_rows($all_Recordset1);
-}
-$totalPages_Recordset1 = ceil($totalRows_Recordset1/$maxRows_Recordset1)-1;
-
-
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<?php
+$threeDays = time() - (60 * 60 * 3);
+
+
+$maxRows_rsUsers = 5;
+$pageNum_rsUsers = 0;
+if (isset($_GET['pageNum_rsUsers'])) {
+  $pageNum_rsUsers = $_GET['pageNum_rsUsers'];
+}
+$startRow_rsUsers = $pageNum_rsUsers * $maxRows_rsUsers;
+
+$colname_rsUsers = "-1";
+if (isset($threeDays)) {
+  $colname_rsUsers = (get_magic_quotes_gpc()) ? $threeDays : addslashes($threeDays);
+}
+mysql_select_db($database_conn, $conn);
+$query_rsUsers = sprintf("SELECT * FROM lr_users WHERE lr_users.emailFlag1 = 1 AND lr_users.emailFlag1Date < %s AND lr_users.cronFlag = 0", $colname_rsUsers);
+$query_limit_rsUsers = sprintf("%s LIMIT %d, %d", $query_rsUsers, $startRow_rsUsers, $maxRows_rsUsers);
+$rsUsers = mysql_query($query_limit_rsUsers, $conn) or die(mysql_error());
+$row_rsUsers = mysql_fetch_assoc($rsUsers);
+
+if (isset($_GET['totalRows_rsUsers'])) {
+  $totalRows_rsUsers = $_GET['totalRows_rsUsers'];
+} else {
+  $all_rsUsers = mysql_query($query_rsUsers);
+  $totalRows_rsUsers = mysql_num_rows($all_rsUsers);
+}
+$totalPages_rsUsers = ceil($totalRows_rsUsers/$maxRows_rsUsers)-1;
+
+?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <title>Untitled Document</title>
 </head>
 
 <body>
-<?php if ($totalRows_Recordset1 > 0) { // Show if recordset not empty ?>
+<h1>cron 2</h1>
+<p>&nbsp;</p>
+
+<?php if ($totalRows_rsUsers > 0) { // Show if recordset not empty ?>
   <table border="1">
     <tr>
       <td>user_id</td>
@@ -81,16 +83,19 @@ $totalPages_Recordset1 = ceil($totalRows_Recordset1/$maxRows_Recordset1)-1;
     </tr>
     <?php do { ?>
 	<?php
-	$colname_reminders = "-1";
-if (isset($row_Recordset1['user_id'])) {
-  $colname_reminders =$row_Recordset1['user_id'];
+	
+$colname_rsReminders = "-1";
+if (isset($row_rsUsers['user_id'])) {
+  $colname_rsReminders = (get_magic_quotes_gpc()) ? $row_rsUsers['user_id'] : addslashes($row_rsUsers['user_id']);
 }
 mysql_select_db($database_conn, $conn);
-$query_reminders = sprintf("SELECT * FROM lr_reminders WHERE user_id = %s", GetSQLValueString($colname_reminders, "int"));
-$reminders = mysql_query($query_reminders, $conn) or die(mysql_error());
-$row_reminders = mysql_fetch_assoc($reminders);
-$totalRows_reminders = mysql_num_rows($reminders);?>
-<?php if ($totalRows_reminders > 0) { // Show if recordset not empty ?>
+$query_rsReminders = sprintf("SELECT * FROM lr_reminders WHERE user_id = %s", $colname_rsReminders);
+$rsReminders = mysql_query($query_rsReminders, $conn) or die(mysql_error());
+$row_rsReminders = mysql_fetch_assoc($rsReminders);
+$totalRows_rsReminders = mysql_num_rows($rsReminders);
+	?>
+	
+<?php if ($totalRows_rsReminders > 0) { // Show if recordset not empty ?>
   <table border="1">
     <tr>
       <td>reminder_id</td>
@@ -101,70 +106,68 @@ $totalRows_reminders = mysql_num_rows($reminders);?>
       <td>fileLink</td>
       <td>status</td>
       <td>reminder_created_dt</td>
-    </tr>
-    <?php do { ?>
-     <?php 
-  $message =" {$row_reminders['title']}
-  {$row_Recordset1['first_name']} is not alive today. He/She has send a special message to you. The message is:
-  {$row_reminders['message']}
-  File Link: {$row_reminders['fileLink']}
-  
-  Thank You,
-  Life Reminder Admin
-  
-  ";
-  
-  echo nl2br($message);
-  // @mail($row_reminders['emailTo'], $row_reminders['title'], $message, 'From: Admin<admin@lifereminder.com>');
-  ?>
-      <tr>
-        <td><?php echo $row_reminders['reminder_id']; ?></td>
-        <td><?php echo $row_reminders['user_id']; ?></td>
-        <td><?php echo $row_reminders['title']; ?></td>
-        <td><?php echo $row_reminders['emailTo']; ?></td>
-        <td><?php echo $row_reminders['message']; ?></td>
-        <td><?php echo $row_reminders['fileLink']; ?></td>
-        <td><?php echo $row_reminders['status']; ?></td>
-        <td><?php echo $row_reminders['reminder_created_dt']; ?></td>
-      </tr>
-      <?php } while ($row_reminders = mysql_fetch_assoc($reminders)); ?>
-  </table>
-  <?php } // Show if recordset not empty ?>
-  
-  <?php 
-  // update, cronFlag = 1;
-  
-  $updateSQL = sprintf("UPDATE lr_users SET cronFlag = 1 WHERE user_id = %s",
-					   GetSQLValueString($row_Recordset1['user_id'],"int"));
-  mysql_select_db($database_conn, $conn);
-  $Result1 = mysql_query($updateSQL, $conn)or die(mysql_error());
-  
-  ?>
-  
-  
-      <tr>
-        <td><?php echo $row_Recordset1['user_id']; ?></td>
-        <td><?php echo $row_Recordset1['email']; ?></td>
-        <td><?php echo $row_Recordset1['first_name']; ?></td>
-        <td><?php echo $row_Recordset1['last_name']; ?></td>
-        <td><?php echo $row_Recordset1['gender']; ?></td>
-        <td><?php echo $row_Recordset1['birth_year']; ?></td>
-        <td><?php echo $row_Recordset1['created_dt']; ?></td>
-        <td><?php echo $row_Recordset1['login_dt']; ?></td>
-        <td><?php echo $row_Recordset1['emailFlag1']; ?></td>
-        <td><?php echo $row_Recordset1['emailFlag1Date']; ?></td>
-        <td><?php echo $row_Recordset1['cronFlag']; ?></td>
-      </tr>
-      <?php } while ($row_Recordset1 = mysql_fetch_assoc($Recordset1)); ?>
-  </table>
-  <?php } // Show if recordset not empty ?>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
+        </tr>
+      <?php do { ?>
+	  
+	  <?php 
+	$message = "{$row_rsReminders['title']}
+{$row_rsUsers['first_name']} is not alive today. He has send a special message for you. The message is:
 
+{$row_rsReminders['message']}
+
+File Link: {$row_rsReminders['fileLink']}
+
+Thank You,
+Life Reminder Admin
+
+";
+echo nl2br($message);
+mail($row_rsReminder['emailTo'], $row_rsReminder['title'], $message, 'From: Admin<admin@lifereminder.com>');
+
+	?>
+	
+          <tr>
+            <td><?php echo $row_rsReminders['reminder_id']; ?></td>
+            <td><?php echo $row_rsReminders['user_id']; ?></td>
+            <td><?php echo $row_rsReminders['title']; ?></td>
+            <td><?php echo $row_rsReminders['emailTo']; ?></td>
+            <td><?php echo $row_rsReminders['message']; ?></td>
+            <td><?php echo $row_rsReminders['fileLink']; ?></td>
+            <td><?php echo $row_rsReminders['status']; ?></td>
+            <td><?php echo $row_rsReminders['reminder_created_dt']; ?></td>
+          </tr>
+          <?php } while ($row_rsReminders = mysql_fetch_assoc($rsReminders)); ?>
+      </table>
+  <?php } // Show if recordset not empty ?>
+  
+  <?php
+//update , cronFlag = 1;
+
+$updateSQL = sprintf("UPDATE lr_users SET cronFlag = 1 WHERE user_id=%s",
+				   GetSQLValueString($row_rsUsers['user_id'], "int"));
+
+mysql_select_db($database_conn, $conn);
+$Result1 = mysql_query($updateSQL, $conn) or die(mysql_error());
+	?>
+  
+      <tr>
+        <td><?php echo $row_rsUsers['user_id']; ?></td>
+        <td><?php echo $row_rsUsers['email']; ?></td>
+        <td><?php echo $row_rsUsers['first_name']; ?></td>
+        <td><?php echo $row_rsUsers['last_name']; ?></td>
+        <td><?php echo $row_rsUsers['gender']; ?></td>
+        <td><?php echo $row_rsUsers['birth_year']; ?></td>
+        <td><?php echo $row_rsUsers['created_dt']; ?></td>
+        <td><?php echo $row_rsUsers['login_dt']; ?></td>
+        <td><?php echo $row_rsUsers['emailFlag1']; ?></td>
+        <td><?php echo $row_rsUsers['emailFlag1Date']; ?></td>
+        <td><?php echo $row_rsUsers['cronFlag']; ?></td>
+      </tr>
+      <?php } while ($row_rsUsers = mysql_fetch_assoc($rsUsers)); ?>
+  </table>
+  <?php } // Show if recordset not empty ?>
 </body>
 </html>
 <?php
-mysql_free_result($Recordset1);
-
-// mysql_free_result($reminders); deleted
+mysql_free_result($rsUsers);
 ?>

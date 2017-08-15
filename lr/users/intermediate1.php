@@ -45,14 +45,9 @@ if (!((isset($_SESSION['MM_Username'])) && (isAuthorized("",$MM_authorizedUsers,
 }
 ?>
 <?php
-if (!function_exists("GetSQLValueString")) {
 function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDefinedValue = "") 
 {
-  if (PHP_VERSION < 6) {
-    $theValue = get_magic_quotes_gpc() ? stripslashes($theValue) : $theValue;
-  }
-
-  $theValue = function_exists("mysql_real_escape_string") ? mysql_real_escape_string($theValue) : mysql_escape_string($theValue);
+  $theValue = (!get_magic_quotes_gpc()) ? addslashes($theValue) : $theValue;
 
   switch ($theType) {
     case "text":
@@ -63,7 +58,7 @@ function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDe
       $theValue = ($theValue != "") ? intval($theValue) : "NULL";
       break;
     case "double":
-      $theValue = ($theValue != "") ? doubleval($theValue) : "NULL";
+      $theValue = ($theValue != "") ? "'" . doubleval($theValue) . "'" : "NULL";
       break;
     case "date":
       $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
@@ -74,25 +69,20 @@ function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDe
   }
   return $theValue;
 }
-}
 
 $editFormAction = $_SERVER['PHP_SELF'];
 if (isset($_SERVER['QUERY_STRING'])) {
   $editFormAction .= "?" . htmlentities($_SERVER['QUERY_STRING']);
 }
 
+$updateSQL = sprintf("UPDATE lr_users SET login_dt=%s, emailFlag1 = 0, cronFlag = 0 WHERE user_id=%s",
+				   GetSQLValueString(time(), "int"),
+				   GetSQLValueString($_SESSION['MM_UserId'], "int"));
 
-  $updateSQL = sprintf("UPDATE lr_users SET login_dt=%s, emailFlag1 = 0, cronFlag = 0 WHERE user_id=%s",
-                       GetSQLValueString(time(), "int"),
-                       GetSQLValueString($_SESSION['MM_UserId'], "int"));
+mysql_select_db($database_conn, $conn);
+$Result1 = mysql_query($updateSQL, $conn) or die(mysql_error());
 
-  mysql_select_db($database_conn, $conn);
-  $Result1 = mysql_query($updateSQL, $conn) or die(mysql_error());
 
 header("Location: login_success.php");
-
-
-?>
-<?php
-mysql_free_result($Recordset1);
+exit;
 ?>

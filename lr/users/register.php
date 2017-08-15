@@ -1,42 +1,16 @@
 <?php require_once('../../Connections/conn.php'); ?>
 <?php
-if (!function_exists("GetSQLValueString")) {
-function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDefinedValue = "") 
-{
-  if (PHP_VERSION < 6) {
-    $theValue = get_magic_quotes_gpc() ? stripslashes($theValue) : $theValue;
-  }
-
-  $theValue = function_exists("mysql_real_escape_string") ? mysql_real_escape_string($theValue) : mysql_escape_string($theValue);
-
-  switch ($theType) {
-    case "text":
-      $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
-      break;    
-    case "long":
-    case "int":
-      $theValue = ($theValue != "") ? intval($theValue) : "NULL";
-      break;
-    case "double":
-      $theValue = ($theValue != "") ? doubleval($theValue) : "NULL";
-      break;
-    case "date":
-      $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
-      break;
-    case "defined":
-      $theValue = ($theValue != "") ? $theDefinedValue : $theNotDefinedValue;
-      break;
-  }
-  return $theValue;
+if (!isset($_SESSION)) {
+  session_start();
 }
-}
-
+?>
+<?php
 // *** Redirect if username exists
 $MM_flag="MM_insert";
 if (isset($_POST[$MM_flag])) {
   $MM_dupKeyRedirect="register_failure.php";
   $loginUsername = $_POST['email'];
-  $LoginRS__query = sprintf("SELECT email FROM lr_users WHERE email=%s", GetSQLValueString($loginUsername, "text"));
+  $LoginRS__query = "SELECT email FROM lr_users WHERE email='" . $loginUsername . "'";
   mysql_select_db($database_conn, $conn);
   $LoginRS=mysql_query($LoginRS__query, $conn) or die(mysql_error());
   $loginFoundUser = mysql_num_rows($LoginRS);
@@ -52,12 +26,37 @@ if (isset($_POST[$MM_flag])) {
   }
 }
 
+function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDefinedValue = "") 
+{
+  $theValue = (!get_magic_quotes_gpc()) ? addslashes($theValue) : $theValue;
+
+  switch ($theType) {
+    case "text":
+      $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
+      break;    
+    case "long":
+    case "int":
+      $theValue = ($theValue != "") ? intval($theValue) : "NULL";
+      break;
+    case "double":
+      $theValue = ($theValue != "") ? "'" . doubleval($theValue) . "'" : "NULL";
+      break;
+    case "date":
+      $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
+      break;
+    case "defined":
+      $theValue = ($theValue != "") ? $theDefinedValue : $theNotDefinedValue;
+      break;
+  }
+  return $theValue;
+}
+
 $editFormAction = $_SERVER['PHP_SELF'];
 if (isset($_SERVER['QUERY_STRING'])) {
   $editFormAction .= "?" . htmlentities($_SERVER['QUERY_STRING']);
 }
 
-if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "formR")) {
+if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "formRegister")) {
   $insertSQL = sprintf("INSERT INTO lr_users (email, password, first_name, last_name, gender, birth_year, created_dt, login_dt) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
                        GetSQLValueString($_POST['email'], "text"),
                        GetSQLValueString($_POST['password'], "text"),
@@ -78,37 +77,31 @@ if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "formR")) {
   }
   header(sprintf("Location: %s", $insertGoTo));
 }
-?>
-<!DOCTYPE html>
+?><!doctype html>
 <html><!-- InstanceBegin template="/Templates/lr.dwt.php" codeOutsideHTMLIsLocked="false" -->
 <head>
-<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>html5</title>
+<title>Register Now</title>
 <!-- InstanceEndEditable -->
 
 <!-- Latest compiled and minified CSS -->
+<link href="//fonts.googleapis.com/css?family=Oswald" rel="stylesheet">
 <link rel="stylesheet" href="../css/bootstrap.min.css">
-<link href="../css/navbar-static-top.css" rel="stylesheet">
-
-
-<!-- jQuery (necessary for Bootstrap's JavaScript plugins put before bootstrap js) -->
 <script src="../js/jquery.min.js"></script>
-<!-- Latest compiled and minified JavaScript -->
 <script src="../js/bootstrap.min.js"></script>
-
-
-
-<!--<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>-->
-
-
+<link rel="stylesheet" href="../css/font-awesome.css">
+<link rel="stylesheet" href="../css/style.css">
 <!-- InstanceBeginEditable name="head" -->
+<meta charset="utf-8">
+
+
 <!-- InstanceEndEditable -->
 </head>
 
 <body>
- <!-- Static navbar -->
+	
+    <!-- Static navbar -->
     <nav class="navbar navbar-inverse navbar-static-top">
       <div class="container">
         <div class="navbar-header">
@@ -118,109 +111,95 @@ if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "formR")) {
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Project name</a>
+          <a class="navbar-brand" href="http://lifereminder.tk">LifeReminder.tk</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
+            <li class="active"><a href="../index.php">Home</a></li>
+            <li><a href="../our_team.php">Our Team</a></li>
+            <li><a href="../about.php">About</a></li>
+            <li><a href="../contact.php">Contact</a></li>
+			
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Reminders <span class="caret"></span></a>
               <ul class="dropdown-menu">
-                <li><a href="#">Action</a></li>
-                <li><a href="#">Another action</a></li>
-                <li><a href="#">Something else here</a></li>
-                <li role="separator" class="divider"></li>
-                <li class="dropdown-header">Nav header</li>
-                <li><a href="#">Separated link</a></li>
-                <li><a href="#">One more separated link</a></li>
+                <li><a href="../reminder/new_reminder.php">Create New Reminder</a></li>
+                <li><a href="../reminder/list_reminders.php">My Reminders</a></li>
               </ul>
             </li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="../../navbar/">Default</a></li>
-            <li class="active"><a href="./">Static top <span class="sr-only">(current)</span></a></li>
-            <li><a href="../../navbar-fixed-top/">Fixed top</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Users <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+			  	<?php if (empty($_SESSION['MM_UserId'])) { ?>
+                <li><a href="register.php">Register New User</a></li>
+                <li><a href="login.php">Login</a></li>
+                <li><a href="forgot.php">Forgot Password</a></li>
+				<?php } ?>
+				<?php if (!empty($_SESSION['MM_UserId'])) { ?>
+                <li><a href="change_password.php">Change Password</a></li>
+                <li><a href="logout.php">Logout</a></li>
+				<?php } ?>
+              </ul>
+            </li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
     </nav>
 
-<div class="container">
-<!-- InstanceBeginEditable name="EditRegion3" -->
+	<!-- InstanceBeginEditable name="EditRegion3" -->
+		<div class="container">
 <div class="row">
-<div class="col-md-12">
-<h3>Please Register</h3>
-  <form method="post"  name="formR" action="<?php echo $editFormAction; ?>">
-    <table>
-      <tr valign="baseline"  >
-        <td nowrap align="right">Email:</td>
-        <td><input type="text" class="form-control" name="email" value="" size="32"></td>
-      </tr>
-      <tr valign="baseline">
-        <td nowrap align="right" >Password:</td>
-        <td><input type="text" class="form-control" name="password" value="" size="32"></td>
-      </tr>
-      <tr valign="baseline">
-        <td nowrap align="right"  >First_name:</td>
-        <td><input type="text" class="form-control" name="first_name" value="" size="32"></td>
-      </tr>
-      <tr valign="baseline">
-        <td nowrap align="right">Last_name:</td>
-        <td><input type="text" class="form-control" name="last_name" value="" size="32"></td>
-      </tr>
-      <tr valign="baseline">
-        <td nowrap align="right">Gender:</td>
-        
-        
-        <td>
-        
-        
-          <label>
-            <input type="radio" name="gender" value="male" id="gender_male">
-           Male </label>
-          
-          <label>
-            <input type="radio" name="gender" value="female" id="gender_female">
-            Female</label>
-          <br>
-        
-        
-        
-       </td>
-      </tr>
-      
-      
-      
-      
-      <tr valign="baseline">
-        <td nowrap align="right">Birth_year:</td>
-        <td><input type="text" class="form-control" name="birth_year" value="" size="32"></td>
-      </tr>
-      
-       
-      
-      
-      
-   
-     
-      <tr valign="baseline">
-        <td nowrap align="right">&nbsp;</td>
-        <td><input type="submit" class="btn btn-default" value="Register"></td>
-      </tr>
-    </table>
-     <input type="hidden" name="created_dt" value="<?php echo date("Y-m-d H-i-s"); ?>" >
-    <input type="hidden" name="login_dt" value="<?php echo time(); ?>" >
-    <input type="hidden" name="MM_insert" value="formR">
-  </form>
-  <p>&nbsp;</p>
-</div></div>
-  
-<!-- InstanceEndEditable -->
-
-
-</div>
-
+			<div class="col-md-12">
+				<h3>Register As New User</h3>
+				<form method="POST" name="formRegister" id="formRegister" action="<?php echo $editFormAction; ?>">
+				  <div class="form-group">
+					<label for="email">Email address</label>
+					<input type="email" class="form-control" id="email" name="email" placeholder="Email">
+				  </div>
+				  <div class="form-group">
+					<label for="password">Password</label>
+					<input type="password" class="form-control" id="password" name="password" placeholder="Password">
+				  </div>
+				  <div class="form-group">
+					<label for="confirm_password">Confirm Password</label>
+					<input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Confirm Password">
+				  </div>
+				  <div class="form-group">
+					<label for="first_name">First Name</label>
+					<input type="text" class="form-control" id="first_name" name="first_name" placeholder="First Name">
+				  </div>
+				  <div class="form-group">
+					<label for="last_name">Last Name</label>
+					<input type="text" class="form-control" id="last_name" name="last_name" placeholder="Last Name">
+				  </div>
+				  <div class="form-group">
+					<label>Gender</label>
+					<div>
+					<input type="radio" name="gender" id="gender_male" value="male" checked> Male <input type="radio" name="gender" id="gender_female" value="female"> Female</div>
+				  </div>
+				  <div class="form-group">
+					<label for="birth_year">Birth Year</label>
+					<input type="number" class="form-control" id="birth_year" name="birth_year" placeholder="Birth Year">
+				  </div>
+				  <div class="checkbox">
+					<label>
+					  <input type="checkbox" id="terms"> I accept the terms and conditions
+					</label>
+				  </div>
+				  <button type="submit" class="btn btn-default">Submit</button>
+				  <input name="created_dt" type="hidden" value="<?php echo date('Y-m-d H:i:s'); ?>">
+				  <input name="login_dt" type="hidden" value="<?php echo time(); ?>">
+				  <input type="hidden" name="MM_insert" value="formRegister">
+			  </form>
+			</div>
+		</div>
+</div> 
+	<!-- InstanceEndEditable -->
+	
+	<footer>
+		<p>Life Reminder : Copyright &copy; 2017 - <a href="#">Terms</a> | <a href="#">Privacy</a></p>
+	</footer>
 </body>
 <!-- InstanceEnd --></html>

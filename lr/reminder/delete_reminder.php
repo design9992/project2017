@@ -1,5 +1,4 @@
-<?php require_once('../../Connections/conn.php'); ?>
-<?php
+<?php require_once('../../Connections/conn.php'); ?><?php
 if (!isset($_SESSION)) {
   session_start();
 }
@@ -32,7 +31,7 @@ function isAuthorized($strUsers, $strGroups, $UserName, $UserGroup) {
   return $isValid; 
 }
 
-$MM_restrictGoTo = "login.php";
+$MM_restrictGoTo = "../users/login.php";
 if (!((isset($_SESSION['MM_Username'])) && (isAuthorized("",$MM_authorizedUsers, $_SESSION['MM_Username'], $_SESSION['MM_UserGroup'])))) {   
   $MM_qsChar = "?";
   $MM_referrer = $_SERVER['PHP_SELF'];
@@ -45,14 +44,9 @@ if (!((isset($_SESSION['MM_Username'])) && (isAuthorized("",$MM_authorizedUsers,
 }
 ?>
 <?php
-if (!function_exists("GetSQLValueString")) {
 function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDefinedValue = "") 
 {
-  if (PHP_VERSION < 6) {
-    $theValue = get_magic_quotes_gpc() ? stripslashes($theValue) : $theValue;
-  }
-
-  $theValue = function_exists("mysql_real_escape_string") ? mysql_real_escape_string($theValue) : mysql_escape_string($theValue);
+  $theValue = (!get_magic_quotes_gpc()) ? addslashes($theValue) : $theValue;
 
   switch ($theType) {
     case "text":
@@ -63,7 +57,7 @@ function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDe
       $theValue = ($theValue != "") ? intval($theValue) : "NULL";
       break;
     case "double":
-      $theValue = ($theValue != "") ? doubleval($theValue) : "NULL";
+      $theValue = ($theValue != "") ? "'" . doubleval($theValue) . "'" : "NULL";
       break;
     case "date":
       $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
@@ -74,11 +68,11 @@ function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDe
   }
   return $theValue;
 }
-}
 
 if ((isset($_GET['reminder_id'])) && ($_GET['reminder_id'] != "")) {
-  $deleteSQL = sprintf("DELETE FROM lr_reminders WHERE reminder_id=%s",
-                       GetSQLValueString($_GET['reminder_id'], "int"));
+  $deleteSQL = sprintf("DELETE FROM lr_reminders WHERE reminder_id=%s AND user_id = %s",
+                       GetSQLValueString($_GET['reminder_id'], "int"),
+					   GetSQLValueString($_SESSION['MM_UserId'], "int"));
 
   mysql_select_db($database_conn, $conn);
   $Result1 = mysql_query($deleteSQL, $conn) or die(mysql_error());
@@ -91,11 +85,12 @@ if ((isset($_GET['reminder_id'])) && ($_GET['reminder_id'] != "")) {
   header(sprintf("Location: %s", $deleteGoTo));
 }
 ?>
-<!DOCTYPE html>
+<!doctype html>
 <html>
 <head>
 <meta charset="utf-8">
-<title>html5</title>
+<title>HTML 5</title>
+
 </head>
 
 <body>
